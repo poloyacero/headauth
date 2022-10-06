@@ -1,12 +1,16 @@
-displayName: Demo Plugin
+displayName: Header Authorization
 type: middleware
 iconPath: .assets/icon.png
 
-import: github.com/traefik/plugindemo
+import: github.com/poloyacero/headauth
 
-summary: '[Demo] Add Request Header'
+summary: "A simple traefik middleware plugin for authorization using the request header by allowed values and methods to multiple endpoints."
 
 testData:
-  Headers:
-    X-Demo: test
-    X-URL: '{{URL}}'
+  header:
+    name: "X-Forward-Role"
+  allowed:
+    - "admin"
+  methods:
+    - "POST"
+    - "GET"
