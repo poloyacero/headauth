@@ -45,7 +45,7 @@ http:
             - "PATCH"
     another-plugin:
       plugin:
-        example:
+        headauth:
           header:
             name: X-Forward-Role
           allowed:
