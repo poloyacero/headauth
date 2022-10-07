@@ -10,7 +10,7 @@ The existing plugins can be browsed into the [Plugin Catalog](https://plugins.tr
 ```yaml
 experimental:
   plugins:
-    pathauth:
+    headauth:
       moduleName: "github.com/poloyacero/headauth"
       version: "v0.0.1"
 ```
@@ -35,7 +35,7 @@ http:
   middlewares:
     my-plugin:
       plugin:
-        example:
+        headauth:
           header:
             name: X-Forward-Role
           allowed:
@@ -45,7 +45,7 @@ http:
             - "PATCH"
     another-plugin:
       plugin:
-        example:
+        headauth:
           header:
             name: X-Forward-Role
           allowed:
