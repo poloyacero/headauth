@@ -1,6 +1,5 @@
 displayName: Header Authorization
 type: middleware
-iconPath: .assets/icon.png
 
 import: github.com/poloyacero/headauth
 
@@ -14,3 +13,4 @@ testData:
   methods:
     - "POST"
     - "GET"
+  responseType: "json"

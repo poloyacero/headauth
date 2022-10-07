@@ -10,10 +10,10 @@ import (
 
 // Config the plugin configuration.
 type Config struct {
-	Header       Header   `json:"header_name,omitempty"`
+	Header       Header   `json:"header,omitempty"`
 	Allowed      []string `json:"allowed,omitempty"`
 	Methods      []string `json:"methods,omitempty"`
-	ResponseType string   `json:"response_type,omitempty"`
+	ResponseType string   `json:"responseType,omitempty"`
 }
 
 type Header struct {
@@ -31,17 +31,19 @@ var typeMaps = map[string]string{
 
 // CreateConfig creates the default plugin configuration.
 func CreateConfig() *Config {
-	return &Config{}
+	return &Config{
+		ResponseType: "text",
+	}
 }
 
 // Traefik middleware plugin for handling authorization
 type Authorize struct {
-	next          http.Handler
-	header        string
-	allowed       []string
-	methods       []string
-	response_type string
-	name          string
+	next         http.Handler
+	header       string
+	responseType string
+	allowed      []string
+	methods      []string
+	name         string
 }
 
 // New created a new Demo plugin.
@@ -58,17 +60,17 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		return nil, fmt.Errorf("methods field needs atleast one value")
 	}
 
-	if config.ResponseType != "" && !isResponseTypeValid(config.ResponseType) {
+	if !isResponseTypeValid(config.ResponseType) {
 		return nil, fmt.Errorf("json/text is the supported type for now")
 	}
 
 	return &Authorize{
-		header:        config.Header.Name,
-		allowed:       config.Allowed,
-		methods:       config.Methods,
-		response_type: config.ResponseType,
-		next:          next,
-		name:          name,
+		header:       config.Header.Name,
+		responseType: config.ResponseType,
+		allowed:      config.Allowed,
+		methods:      config.Methods,
+		next:         next,
+		name:         name,
 	}, nil
 }
 
@@ -91,7 +93,7 @@ func (a *Authorize) getRoleFromHeader(headers http.Header) string {
 func (a *Authorize) reject(rw http.ResponseWriter) {
 	var message []byte
 
-	if a.response_type == "json" {
+	if a.responseType == "json" {
 		rw.Header().Add("Content-Type", "application/json")
 		message, _ = json.Marshal(&ResponseMessage{
 			Message: "Forbidden",
@@ -109,7 +111,6 @@ func (a *Authorize) reject(rw http.ResponseWriter) {
 
 func isResponseTypeValid(responseType string) bool {
 	_, ok := typeMaps[responseType]
-
 	if !ok {
 		return false
 	}
